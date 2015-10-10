@@ -20,10 +20,10 @@ namespace Squeak
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            for(int i = 0; i < 10000; i++)
+            for(int i = 100; i < 1000; i++)
             {
-                MouseManipulator.VirtualMouse.MoveTo(i, i);
-                //System.Threading.Thread.Sleep(50000);
+                MouseManipulator.VirtualMouse.Move(i, i);
+                System.Threading.Thread.Sleep(1000);
             }
         }
     }
