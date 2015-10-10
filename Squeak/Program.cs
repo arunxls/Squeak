@@ -20,30 +20,40 @@ namespace Squeak
         [STAThread]
         static void Main()
         {
-            byte[] data = new byte[1024];
-            IPEndPoint ipep = new IPEndPoint(IPAddress.Any, 9050);
-            UdpClient newsock = new UdpClient(ipep);
+            // Create UDP client
+            int receiverPort = 20000;
+            UdpClient receiver = new UdpClient(receiverPort);
 
-            Console.WriteLine("Waiting for a client...");
+            // Display some information
+            Console.WriteLine("Starting Upd receiving on port: " + receiverPort);
+            Console.WriteLine("Press any key to quit.");
+            Console.WriteLine("-------------------------------\n");
 
-            IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
+            // Start async receiving
+            receiver.BeginReceive(DataReceived, receiver);
 
-            data = newsock.Receive(ref sender);
+            // Send some test messages
+            using (UdpClient sender1 = new UdpClient(19999))
+                sender1.Send(Encoding.ASCII.GetBytes("Hi!"), 3, "localhost", receiverPort);
+            using (UdpClient sender2 = new UdpClient(20001))
+                sender2.Send(Encoding.ASCII.GetBytes("Hi!"), 3, "localhost", receiverPort);
 
-            Console.WriteLine("Message received from {0}:", sender.ToString());
-            Console.WriteLine(Encoding.ASCII.GetString(data, 0, data.Length));
+            // Wait for any key to terminate application
+            Console.Read();
+        }
 
-            string welcome = "Welcome to my test server";
-            data = Encoding.ASCII.GetBytes(welcome);
-            newsock.Send(data, data.Length, sender);
+        private static void DataReceived(IAsyncResult ar)
+        {
+            UdpClient c = (UdpClient)ar.AsyncState;
+            IPEndPoint receivedIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
+            Byte[] receivedBytes = c.EndReceive(ar, ref receivedIpEndPoint);
 
-            while (true)
-            {
-                data = newsock.Receive(ref sender);
-                //TODO: call app. mouse functions here and also parse for termination of connection
-                Console.WriteLine(Encoding.ASCII.GetString(data, 0, data.Length));
-                newsock.Send(data, data.Length, sender);
-            }
+            // Convert data to ASCII and print in console
+            string receivedText = ASCIIEncoding.ASCII.GetString(receivedBytes);
+            Console.Write(receivedIpEndPoint + ": " + receivedText + Environment.NewLine);
+
+            // Restart listening for udp data packages
+            c.BeginReceive(DataReceived, ar.AsyncState);
         }
     }
 }
