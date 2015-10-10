@@ -34,9 +34,9 @@ namespace Squeak
 
             // Send some test messages
             using (UdpClient sender1 = new UdpClient(19999))
-                sender1.Send(Encoding.ASCII.GetBytes("Hi!"), 3, "localhost", receiverPort);
+                sender1.Send(Encoding.ASCII.GetBytes("Move mouse left"), 15, "localhost", receiverPort);
             using (UdpClient sender2 = new UdpClient(20001))
-                sender2.Send(Encoding.ASCII.GetBytes("Hi!"), 3, "localhost", receiverPort);
+                sender2.Send(Encoding.ASCII.GetBytes("Move mouse right"), 16, "localhost", receiverPort);
 
             // Wait for any key to terminate application
             Console.Read();
@@ -51,8 +51,19 @@ namespace Squeak
             // Convert data to ASCII and print in console
             string receivedText = ASCIIEncoding.ASCII.GetString(receivedBytes);
             Console.Write(receivedIpEndPoint + ": " + receivedText + Environment.NewLine);
+            if (receivedText == "Move mouse right")
+            {
+                Console.Write(receivedIpEndPoint + ": " + receivedText + Environment.NewLine);
+                VirtualMouse.Move(1000, 0);
+            }
 
-            // Restart listening for udp data packages
+            if (receivedText == "Move mouse left")
+            {
+                Console.Write(receivedIpEndPoint + ": " + receivedText + Environment.NewLine);
+                VirtualMouse.Move(-1000, 0);
+            }
+
+            //return to listening
             c.BeginReceive(DataReceived, ar.AsyncState);
         }
     }
