@@ -1,37 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
 namespace Squeak
 {
-    public partial class Form1 : Form
-    {
-        public Form1()
-        {
-            InitializeComponent();
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            for(int i = 100; i < 1000; i++)
-            {
-                MouseManipulator.VirtualMouse.Move(i, i);
-                System.Threading.Thread.Sleep(1000);
-            }
-        }
-    }
-}
-
-namespace MouseManipulator
-{
-    public static class VirtualMouse
+    class VirtualMouse
     {
         [DllImport("user32.dll")]
         static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);

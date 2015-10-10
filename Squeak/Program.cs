@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
 
 namespace Squeak
 {
@@ -16,7 +20,12 @@ namespace Squeak
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+
+            for (int i = 50; i < 55; i++)
+            {
+                VirtualMouse.Move(i, i);
+                System.Threading.Thread.Sleep(1000);
+            }
         }
     }
 }
